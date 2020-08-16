@@ -7,7 +7,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-client = MongoClient('mongodb://admin:admin@localhost:5151/bingedb?authSource=admin')
+client = MongoClient(
+    'mongodb+srv://binge_user:j5zK0ITpZzbbRkbR@bingedb.srj5f.gcp.mongodb.net/bingedb?retryWrites=true&w=majority')
 
 db = client.bingedb
 
@@ -72,4 +73,11 @@ def home():
     return jsonify(top_five_movies)
 
 
-app.run()
+@app.route('/')
+def index():
+    return "<h1>Welcome to our server !!</h1>"
+
+
+if __name__ == '__main__':
+    # Threaded option to enable multiple instances for multiple user access support
+    app.run(threaded=True, port=5000)

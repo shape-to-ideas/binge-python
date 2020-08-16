@@ -1,1 +1,1 @@
-web: gunicorn --bind 0.0.0.0:$PORT mongo:app
+web: gunicorn mongo:app --log-file=-

@@ -7,9 +7,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-# client = MongoClient('mongodb+srv://binge_user:j5zK0ITpZzbbRkbR@bingedb.srj5f.gcp.mongodb.net/bingedb?retryWrites=true&w=majority')
+client = MongoClient('mongodb+srv://binge_user:j5zK0ITpZzbbRkbR@bingedb.srj5f.gcp.mongodb.net/bingedb?retryWrites=true&w=majority')
 
-client = MongoClient('mongodb://admin:admin@localhost:5151/bingedb?authSource=admin')  # @TODO
+# client = MongoClient('mongodb://admin:admin@localhost:5151/bingedb?authSource=admin')  # @TODO
 
 db = client.bingedb
 
@@ -22,13 +22,14 @@ def array_to_string(array):
 
 
 def combine_features(row):
-    return row['title'] + ' ' + row.get('release_date', '') + ' ' + str(row['adult']) + ' ' + array_to_string(
+    movie_detail_string = row['title'] + ' ' + row.get('release_date', '') + ' ' + str(row['adult']) + ' ' + array_to_string(
         row['genre_ids'])
+    return movie_detail_string.lower()
 
 
 def get_index_by_title(title, movies):
     for movie in movies:
-        if movie['title'] == title:
+        if movie['title'].lower() == title:
             return movie['index']
 
 
@@ -40,7 +41,7 @@ def get_movie_by_index(index, movies):
 def home():
     movies_model = db.movies
 
-    get_all_movies = movies_model.find({}, {'title': 1, 'release_date': 1, 'adult': 1, 'genre_ids': 1})[0:150]
+    get_all_movies = movies_model.find({}, {'title': 1, 'release_date': 1, 'adult': 1, 'genre_ids': 1})
 
     combined_features = []
     movie_by_index = []
@@ -57,7 +58,7 @@ def home():
 
     recommendation_for_title = request.json.get('name')
 
-    movie_index = get_index_by_title(recommendation_for_title, movie_by_index)
+    movie_index = get_index_by_title(recommendation_for_title.lower(), movie_by_index)
 
     similar_movies = list(enumerate(cosine_sim[movie_index]))
 

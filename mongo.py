@@ -1,10 +1,12 @@
 from pymongo import MongoClient
 import flask
 from flask import request, jsonify
+from flask_cors import CORS
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 app = flask.Flask(__name__)
+CORS(app)
 app.config["DEBUG"] = True
 
 client = MongoClient('mongodb+srv://binge_user:j5zK0ITpZzbbRkbR@bingedb.srj5f.gcp.mongodb.net/bingedb?retryWrites=true&w=majority')
@@ -72,7 +74,11 @@ def home():
         i = i + 1
         if i >= 10:
             break
-    return jsonify(top_fifty_movies)
+
+    response = flask.jsonify(top_fifty_movies)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 
 @app.route('/')

@@ -16,16 +16,27 @@ client = MongoClient('mongodb+srv://binge_user:j5zK0ITpZzbbRkbR@bingedb.srj5f.gc
 db = client.bingedb
 
 
-def array_to_string(array):
+def form_genre_string(array):
     string = ''
     for value in array:
-        string += ' ' + str(value)
+        string += ' genre=' + str(value)
     return string
 
+def get_release_year(release_date):
+    if release_date != '':
+        return 'released_on=' + release_date[0:4]
+    else:
+        return ''
+
+def get_original_language(original_language):
+    if original_language:
+        return 'original_language=' + original_language
+    else:
+        return ''
 
 def combine_features(row):
-    movie_detail_string = row['title'] + ' ' + row.get('release_date', '') + ' ' + str(row['adult']) + ' ' + array_to_string(
-        row['genre_ids'])
+    movie_detail_string = row['title'] + ' ' + get_release_year(row.get('release_date', '')) + ' is_adult=' + str(row['adult']) + ' ' + form_genre_string(
+        row['genre_ids']) + ' ' + get_original_language(row.get('original_language', ''))
     return movie_detail_string.lower()
 
 

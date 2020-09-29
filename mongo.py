@@ -54,7 +54,7 @@ def get_movie_by_index(index, movies):
 def home():
     movies_model = db.movies
 
-    get_all_movies = movies_model.find({}, {'title': 1, 'release_date': 1, 'adult': 1, 'genre_ids': 1})
+    get_all_movies = movies_model.find({}, {'title': 1, 'release_date': 1, 'adult': 1, 'genre_ids': 1})[0:6000]
 
     combined_features = []
     movie_by_index = []
